@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "cheerio" : "0.12.3",
+        "express" : "3.4.0",
+        "mustache": "0.7.2",
+        "q"       : "0.9.7"
+    }
+}
