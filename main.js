@@ -28,6 +28,8 @@ app.get('/leagues/:id', function(req, res){
     })).then(function(body){
         var $ = cheerio.load(body);
 
+        var name = $(".league-team-names h1").text();
+
         var teams = $("#games-tabs1 a").map(function(i,e){
             return {
                 id:   $(e).attr('href').match(/teamId=(\d*)/)[1],
@@ -36,7 +38,8 @@ app.get('/leagues/:id', function(req, res){
         });
 
         res.send({
-            id: req.param('id'),
+            id   : req.param('id'),
+            name : name,
             teams: teams
         });
     }).catch(function(err){
