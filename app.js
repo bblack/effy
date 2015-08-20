@@ -2,15 +2,22 @@ var url = require('url');
 var express  = require('express');
 var cheerio  = require('cheerio');
 var Promise  = require('bluebird');
-var Mustache = require('mustache');
 var request  = Promise.promisifyAll(require('request'));
+
+var ESPN_PROTO = 'http';
+var ESPN_HOST = 'games.espn.go.com';
 
 var app = express()
 .get('/leagues/:id', function(req, res){
-    var url = Mustache.render('http://games.espn.go.com/ffl/leagueoffice?leagueId={{id}}', {
-        id: req.param('id')
+    var espnUrl = url.format({
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
+        pathname: '/ffl/leagueoffice',
+        query: {
+            leagueId: req.param('id')
+        }
     });
-    request.getAsync(url)
+    request.getAsync(espnUrl)
     .spread(function(espnRes){
         var $ = cheerio.load(espnRes.body);
         var name = $(".league-team-names h1").text();
@@ -29,8 +36,8 @@ var app = express()
 })
 .get('/leagues/:league_id/teams/:team_id/news', function(req, res){
     var espnUrl = url.format({
-        protocol: 'http',
-        host: 'games.espn.go.com',
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
         pathname: '/ffl/playertable/prebuilt/manageroster',
         query: {
             leagueId: req.param('league_id'),
