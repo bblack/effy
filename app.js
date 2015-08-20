@@ -6,6 +6,7 @@ var request  = Promise.promisifyAll(require('request'));
 
 var ESPN_PROTO = 'http';
 var ESPN_HOST = 'games.espn.go.com';
+var SEASON = new Date().getFullYear();
 
 var app = express()
 .get('/leagues/:id', function(req, res){
@@ -42,7 +43,7 @@ var app = express()
         query: {
             leagueId: req.param('league_id'),
             teamId: req.param('team_id'),
-            seasonId: 2015,
+            seasonId: SEASON,
             // no idea what the rest of this does
             view: 'news',
             context: 'clubhouse',
@@ -69,6 +70,33 @@ var app = express()
         })
         res.json(stories);
     });
+})
+.get('/leagues/:league_id/teams/:team_id/roster', function(req, res){
+    var espnurl = url.format({
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
+        pathname: '/ffl/clubhouse',
+        query: {
+            leagueId: req.param('league_id'),
+            teamId: req.param('team_id'),
+            seasonId: SEASON
+        }
+    });
+    request.getAsync(espnurl)
+    .spread(function(espnres){
+        var $ = cheerio.load(espnres.body);
+        var rosterSpots = $('table.playerTableTable tr.pncPlayerRow').map(function(i,e){
+            var playerAnchor = $(e).find('td').eq(1).find('a').eq(0)
+            return {
+                pos: $(e).find('td').eq(0).text(),
+                player: {
+                    id: playerAnchor.attr('playerid'),
+                    name: playerAnchor.text()
+                }
+            };
+        });
+        res.json(rosterSpots);
+    })
 });
 
 module.exports = app;

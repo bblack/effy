@@ -36,3 +36,22 @@ describe('GET /leagues/:league_id/teams/:team_id/news', function(){
         })
     })
 })
+describe('GET /leagues/:league_id/teams/:team_id/roster', function(){
+    it('should work', function(done){
+        request(app)
+        .get('/leagues/172724/teams/2/roster')
+        .end(function(err, res){
+            if (err) {
+                done(err);
+                return;
+            }
+            var positions = ['QB', 'RB', 'WR', 'TE', 'Bench'];
+            positions.forEach(function(pos){
+                assert(res.body.some(function(rosterspot){
+                    return rosterspot.pos == pos;
+                }), 'Roster has a spot for ' + pos);
+            });
+            done();
+        })
+    })
+})
