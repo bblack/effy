@@ -19,3 +19,20 @@ describe('GET /leagues/:id', function(){
         })
     })
 })
+describe('GET /leagues/:league_id/teams/:team_id/news', function(){
+    it('should work', function(done){
+        request(app)
+        .get('/leagues/172724/teams/2/news')
+        .end(function(err, res){
+            if (err) {
+                done(err);
+                return;
+            }
+            assert(res.body.length);
+            assert(res.body[0].title);
+            assert(res.body[0].date);
+            assert(res.body[0].text);
+            done();
+        })
+    })
+})
