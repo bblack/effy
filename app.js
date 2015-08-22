@@ -9,6 +9,7 @@ var ESPN_HOST = 'games.espn.go.com';
 var SEASON = new Date().getFullYear();
 
 var app = express()
+.use(express.static('assets'))
 .get('/leagues/:id', function(req, res){
     var espnUrl = url.format({
         protocol: ESPN_PROTO,
@@ -33,6 +34,34 @@ var app = express()
             name : name,
             teams: teams
         });
+    });
+})
+.get('/leagues/:id/recent_activity', function(req, res){
+    var espnurl = url.format({
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
+        pathname: '/ffl/leagueoffice',
+        query: {
+            leagueId: req.param('id'),
+            seasonId: SEASON
+        }
+    });
+    request.getAsync(espnurl)
+    .spread(function(espnres){
+        var $ = cheerio.load(espnres.body);
+        var actions = $('ul#lo-recent-activity-list li.lo-recent-activity-item')
+        .map(function(i,e){
+            var $e = $(e);
+            return {
+                date: $e.find('.recent-activity-date').text(),
+                time: $e.find('.recent-activity-time').text(),
+                type: $e.find('.recent-activity-image').attr('class')
+                    .split(' ').reverse()[0],
+                // TODO: parse harder
+                desc: $e.find('.recent-activity-description').text()
+            };
+        });
+        res.json(actions);
     });
 })
 .get('/leagues/:league_id/teams/:team_id/news', function(req, res){

@@ -19,6 +19,24 @@ describe('GET /leagues/:id', function(){
         })
     })
 })
+describe('GET /leagues/:id/recent_activity', function(){
+    it('should work', function(done){
+        request(app)
+        .get('/leagues/172724/recent_activity')
+        .end(function(err, res){
+            if (err) {
+                done(err);
+                return;
+            }
+            assert(res.body.length);
+            assert(res.body[0].date);
+            assert(res.body[0].time);
+            assert(res.body[0].type);
+            assert(res.body[0].desc);
+            done();
+        })
+    })
+})
 describe('GET /leagues/:league_id/teams/:team_id/news', function(){
     it('should work', function(done){
         request(app)
