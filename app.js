@@ -79,7 +79,8 @@ var app = express()
             id   : req.param('id'),
             name : name,
             teams: teams,
-            recent_activity: getLeagueRecentActivity($)
+            recent_activity: getLeagueRecentActivity($),
+            manager_note: $('.lm-note-body').html()
         });
     });
 })

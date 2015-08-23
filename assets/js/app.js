@@ -44,6 +44,7 @@ define(function(require){
                         .reverse()
                         .groupBy('division')
                         .value();
+                    $scope.manager_note = res.data.manager_note;
                 });
             },
             templateUrl: '/templates/leagues/recent_activity.html'
