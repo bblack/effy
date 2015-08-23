@@ -1,13 +1,17 @@
 {
   "dependencies": {
     "bluebird": "^2.9.34",
+    "broccoli": "^0.16.7",
     "cheerio": "0.12.3",
-    "express": "4.1.0",
+    "express": "4.8.0",
     "mustache": "0.7.2",
     "q": "0.9.7",
     "request": "^2.61.0"
   },
   "devDependencies": {
+    "broccoli-funnel": "^0.2.8",
+    "broccoli-less-single": "^0.4.0",
+    "broccoli-merge-trees": "^0.2.3",
     "supertest": "^1.0.1"
   }
 }
