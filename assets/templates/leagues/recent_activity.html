@@ -1,16 +1,45 @@
 <h2>
     {{league.name || 'League'}}
 </h2>
-<div class='panel panel-default'>
-    <div class='panel-heading'>
-        Recent activity
+<div class='row'>
+    <div class='col-md-6'>
+        <div class='panel panel-default'>
+            <div class='panel-heading'>
+                Recent activity
+            </div>
+            <table id='actions-table' class='table table-condensed'>
+                <tr ng-repeat='action in actions'>
+                    <td>
+                        <span class='action-icon action-icon-{{action.type}}'></span>
+                        {{action.desc}}
+                        <span class='pull-right small'>
+                            {{action.date}} {{action.time}}
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <table id='actions-table' class='table table-condensed table-striped'>
-        <tr ng-repeat='action in actions'>
-            <td>
-                <span class='action-icon action-icon-{{action.type}}'></span>
-                {{action.desc}}
-            </td>
-        </tr>
-    </table>
+    <div class='col-md-6'>
+        <div class='panel panel-default'>
+            <div class='panel-heading'>
+                Standings
+            </div>
+            <table ng-repeat='(divname, division) in divisions' class='table table-condensed'>
+                <tr>
+                    <th>
+                        {{divname}}
+                    </th>
+                </tr>
+                <tr ng-repeat='team in division'>
+                    <td>
+                        {{team.name}}
+                    </td>
+                    <td>
+                        ({{team.wins}}-{{team.losses}})
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>

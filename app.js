@@ -1,4 +1,5 @@
 var url = require('url');
+var _ = require('underscore');
 var express  = require('express');
 var cheerio  = require('cheerio');
 var Promise  = require('bluebird');
@@ -17,6 +18,21 @@ function broc(){
     var brocWatcher = new BroccoliWatcher(brocBuilder);
     var brocAssets = new BroccoliMiddleware(brocWatcher);
     return brocAssets;
+}
+
+function getLeagueRecentActivity($){
+    return $('ul#lo-recent-activity-list li.lo-recent-activity-item')
+    .map(function(i,e){
+        var $e = $(e);
+        return {
+            date: $e.find('.recent-activity-date').text(),
+            time: $e.find('.recent-activity-time').text(),
+            type: $e.find('.recent-activity-image').attr('class')
+                .split(' ').reverse()[0],
+            // TODO: parse harder
+            desc: $e.find('.recent-activity-description').text()
+        };
+    });
 }
 
 var app = express()
@@ -41,13 +57,29 @@ var app = express()
         var teams = $("#games-tabs1 a").map(function(i,e){
             return {
                 id:   $(e).attr('href').match(/teamId=(\d*)/)[1],
-                name: $(e).contents()[0].data
+                name: $(e).contents()[0].data.replace(/\s*$/, '')
             };
+        });
+        var currentDivision;
+        $('.lo-sidebar-box').eq(-1).find('table tr').map(function(i,e){
+            var $e = $(e);
+            var newDivision = $e.find('td.division-name');
+            if (newDivision.length) {
+                currentDivision = newDivision.text();
+                return;
+            }
+            var teamName = $e.find('td').eq(1).find('a').text();
+            var team = _.findWhere(teams, {name: teamName})
+            var record = $e.find('td').eq(2).text().split('-');
+            team.wins = Number(record[0]);
+            team.losses = Number(record[1]);
+            team.division = currentDivision;
         });
         res.json({
             id   : req.param('id'),
             name : name,
-            teams: teams
+            teams: teams,
+            recent_activity: getLeagueRecentActivity($)
         });
     });
 })
@@ -64,18 +96,7 @@ var app = express()
     request.getAsync(espnurl)
     .spread(function(espnres){
         var $ = cheerio.load(espnres.body);
-        var actions = $('ul#lo-recent-activity-list li.lo-recent-activity-item')
-        .map(function(i,e){
-            var $e = $(e);
-            return {
-                date: $e.find('.recent-activity-date').text(),
-                time: $e.find('.recent-activity-time').text(),
-                type: $e.find('.recent-activity-image').attr('class')
-                    .split(' ').reverse()[0],
-                // TODO: parse harder
-                desc: $e.find('.recent-activity-description').text()
-            };
-        });
+        var actions = getLeagueRecentActivity($);
         res.json(actions);
     });
 })
