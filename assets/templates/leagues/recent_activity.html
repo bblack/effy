@@ -1,5 +1,5 @@
 <h2>
-    {{league.name || 'Band of Broheims'}}
+    {{league.name || 'League'}}
 </h2>
 <div class='panel panel-default'>
     <div class='panel-heading'>
@@ -9,8 +9,6 @@
         <tr ng-repeat='action in actions'>
             <td>
                 <span class='action-icon action-icon-{{action.type}}'></span>
-            </td>
-            <td>
                 {{action.desc}}
             </td>
         </tr>
