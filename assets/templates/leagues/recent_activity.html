@@ -43,7 +43,9 @@
                 </tr>
                 <tr ng-repeat='team in division'>
                     <td>
-                        {{team.name}}
+                        <a ng-href='leagues/{{leagueId}}/teams/{{team.id}}'>
+                            {{team.name}}
+                        </a>
                     </td>
                     <td>
                         ({{team.wins}}-{{team.losses}})

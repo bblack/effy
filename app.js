@@ -152,13 +152,14 @@ var app = express()
     .spread(function(espnres){
         var $ = cheerio.load(espnres.body);
         var rosterSpots = $('table.playerTableTable tr.pncPlayerRow').map(function(i,e){
-            var playerAnchor = $(e).find('td').eq(1).find('a').eq(0)
+            var playerAnchor = $(e).find('td').eq(1).find('a').eq(0);
+            var player = !playerAnchor.length ? null : {
+                id: playerAnchor.attr('playerid'),
+                name: playerAnchor.text()
+            }
             return {
                 pos: $(e).find('td').eq(0).text(),
-                player: {
-                    id: playerAnchor.attr('playerid'),
-                    name: playerAnchor.text()
-                }
+                player: player
             };
         });
         res.json(rosterSpots);

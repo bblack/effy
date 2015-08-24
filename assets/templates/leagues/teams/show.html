@@ -1,0 +1,13 @@
+<h2>
+    {{team.name || 'Team'}}
+</h2>
+<table class='table table-condensed table-striped'>
+    <tr ng-repeat='spot in roster'>
+        <td>
+            {{spot.pos}}
+        </td>
+        <td>
+            {{spot.player.name}}
+        </td>
+    </tr>
+</table>

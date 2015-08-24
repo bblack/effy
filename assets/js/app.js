@@ -19,10 +19,11 @@ requirejs.config({
 
 define(function(require){
     var angular = require('angular');
+    require('angular-resource');
     require('angular-route');
     var _ = require('underscore');
 
-    angular.module('effy', ['ngRoute'])
+    angular.module('effy', ['ngResource', 'ngRoute'])
     .config(function($locationProvider, $routeProvider){
         $locationProvider.html5Mode(true);
         $routeProvider
@@ -33,7 +34,7 @@ define(function(require){
         })
         .when('/leagues/:league_id', {
             controller: function($scope, $routeParams, $http){
-                var leagueId = $routeParams.league_id;
+                var leagueId = $scope.leagueId = $routeParams.league_id;
                 var url = '/leagues/' + leagueId;
                 $http.get(url)
                 .then(function(res){
@@ -49,11 +50,29 @@ define(function(require){
             },
             templateUrl: '/templates/leagues/recent_activity.html'
         })
+        .when('/leagues/:league_id/teams/:team_id', {
+            controller: function($scope, $routeParams, Team, $http){
+                var leagueId = $routeParams.league_id;
+                var teamId = $routeParams.team_id;
+                // var params = {league_id: leagueId, team_id: teamId};
+                // $scope.team = Team.get(params);
+                $http.get('/leagues/' + leagueId + '/teams/' + teamId + '/roster')
+                .then(function(res){
+                    $scope.roster = res.data;
+                });
+            },
+            templateUrl: '/templates/leagues/teams/show.html'
+        })
         .otherwise({
             controller: function($scope, $route){
                 console.log($route);
             }
         })
-    });
+    })
+    .factory('Team', function($resource, $http){
+        var teamUrl = '/leagues/:league_id/teams/:team_id';
+        var Team = $resource(teamUrl);
+        return Team;
+    })
     angular.bootstrap(document.body, ['effy']);
 })
