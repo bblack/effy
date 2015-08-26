@@ -14,7 +14,7 @@
     </div>
 </div>
 <div class='row'>
-    <div class='col-md-8'>
+    <div class='col-lg-6'>
         <div class='panel panel-default'>
             <div class='panel-heading'>
                 Recent activity
@@ -32,46 +32,57 @@
             </table>
         </div>
     </div>
-    <div class='col-md-4'>
-        <div class='panel panel-default'>
-            <div class='panel-heading'>
-                Standings
+    <div class='col-lg-6'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <div class='panel panel-default'>
+                    <div class='panel-heading'>
+                        Standings
+                    </div>
+                    <table ng-repeat='(divname, division) in divisions' class='table table-condensed'>
+                        <thead><tr>
+                            <th>
+                                {{divname}}
+                            </th>
+                            <th>
+                                
+                            </th>
+                        </tr></thead>
+                        <tr ng-repeat='team in division'>
+                            <td>
+                                <a ng-href='leagues/{{leagueId}}/teams/{{team.id}}'>
+                                    {{team.name}}
+                                </a>
+                            </td>
+                            <td>
+                                ({{team.wins}}-{{team.losses}})
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <table ng-repeat='(divname, division) in divisions' class='table table-condensed'>
-                <tr>
-                    <th>
-                        {{divname}}
-                    </th>
-                </tr>
-                <tr ng-repeat='team in division'>
-                    <td>
-                        <a ng-href='leagues/{{leagueId}}/teams/{{team.id}}'>
-                            {{team.name}}
-                        </a>
-                    </td>
-                    <td>
-                        ({{team.wins}}-{{team.losses}})
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
-<h2>Scores</h2>
-<div class='row'>
-    <div ng-repeat='matchup in matchups' class='col-md-2'>
-        <div class='panel panel-default'>
-            <table class='table table-condensed'>
-                <tr ng-repeat='side in matchup'>
-                    <td>
-                        {{side.team.name}}
-                        <small class='text-muted' style='display: inline-block;'>{{side.team.record}}</small>
-                    </td>
-                    <td class='text-right'>
-                        <strong>{{side.score}}</strong>
-                    </td>
-                </tr>
-            </table>
+            <div class='col-sm-6'>
+                <div class='panel panel-default'>
+                    <div class='panel-heading'>
+                        Scores
+                    </div>
+                    <div class='panel-body'>
+                        <div ng-repeat='matchup in matchups' class='well well-sm'>
+                            <div ng-repeat='side in matchup'>
+                                {{side.team.name}}
+                                <small class='text-muted' style='display: inline-block;'>
+                                    {{side.team.record}}
+                                </small>
+                                <span class='pull-right'>
+                                    <strong>
+                                        {{side.score}}
+                                    </strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
