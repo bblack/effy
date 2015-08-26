@@ -101,6 +101,38 @@ var app = express()
         res.json(actions);
     });
 })
+.get('/leagues/:id/scoreboard', function(req, res){
+    var espnurl = url.format({
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
+        pathname: '/ffl/scoreboard',
+        query: {
+            leagueId: req.param('id'),
+            seasonId: SEASON,
+            matchupPeriodId: req.param('week')
+        }
+    });
+    request.getAsync(espnurl)
+    .spread(function(espnres){
+        var $ = cheerio.load(espnres.body);
+        var matchups = $('#scoreboardMatchups table.matchup').map(function(i,e){
+            var sides = $(e).find('tr').slice(0, 2).map(function(i,e){
+                var teamAnchor = $(e).find('a').eq(0);
+                var team = {
+                    id: teamAnchor.attr('href').match('teamId=([0-9]+)')[1],
+                    name: teamAnchor.text(),
+                    record: $(e).find('.record').text(), // TODO: parse harder
+                };
+                return {
+                    team: team,
+                    score: Number($(e).find('td.score').text())
+                };
+            });
+            return sides;
+        });
+        res.json(matchups);
+    });
+})
 .get('/leagues/:league_id/teams/:team_id/news', function(req, res){
     var espnUrl = url.format({
         protocol: ESPN_PROTO,
