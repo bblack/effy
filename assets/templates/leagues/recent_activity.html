@@ -19,17 +19,15 @@
             <div class='panel-heading'>
                 Recent activity
             </div>
-            <table id='actions-table' class='table table-condensed'>
-                <tr ng-repeat='action in actions'>
-                    <td>
-                        <span class='action-icon action-icon-{{action.type}}'></span>
-                        {{action.desc}}
-                        <span class='pull-right small text-muted'>
-                            {{action.date}} {{action.time}}
-                        </span>
-                    </td>
-                </tr>
-            </table>
+            <div class='panel-body'>
+                <div ng-repeat='action in actions'>
+                    <span class='pull-right small text-muted'>
+                        {{action.date}} {{action.time}}
+                    </span>
+                    <span class='action-icon action-icon-{{action.type}}'></span>
+                    {{action.desc}}
+                </div>
+            </div>
         </div>
     </div>
     <div class='col-lg-6'>
@@ -39,26 +37,21 @@
                     <div class='panel-heading'>
                         Standings
                     </div>
-                    <table ng-repeat='(divname, division) in divisions' class='table table-condensed'>
-                        <thead><tr>
-                            <th>
-                                {{divname}}
-                            </th>
-                            <th>
-                                
-                            </th>
-                        </tr></thead>
-                        <tr ng-repeat='team in division'>
-                            <td>
+                    <div class='panel-body'>
+                        <strong ng-repeat-start='(divname, division) in divisions'>
+                            {{divname}}
+                        </strong>
+                        <ul ng-repeat-end class='list-unstyled'>
+                            <li ng-repeat='team in division'>
                                 <a ng-href='leagues/{{leagueId}}/teams/{{team.id}}'>
                                     {{team.name}}
                                 </a>
-                            </td>
-                            <td>
-                                ({{team.wins}}-{{team.losses}})
-                            </td>
-                        </tr>
-                    </table>
+                                <span class='pull-right'>
+                                    ({{team.wins}}-{{team.losses}})
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class='col-sm-6'>
