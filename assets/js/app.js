@@ -47,6 +47,10 @@ define(function(require){
                         .value();
                     $scope.manager_note = res.data.manager_note;
                 });
+                $http.get('/leagues/' + leagueId + '/scoreboard')
+                .then(function(res){
+                    $scope.matchups = res.data;
+                });
             },
             templateUrl: '/templates/leagues/recent_activity.html'
         })
