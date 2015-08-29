@@ -60,29 +60,54 @@ define(function(require){
         })
         .when('/leagues/:league_id/stats', {
             controller: function($scope, $routeParams, $http) {
-                var d3 = require('d3');
                 $scope.positions = ['QB', 'RB', 'WR', 'TE', 'D/ST', 'K'];
                 $scope.chartController = function($scope, $element){
+                    var d3 = require('d3');
+                    var datacount = 50;
+                    $scope.h = 400;
+
                     $http.get('/leagues/' + $routeParams.league_id + '/players', {
                         params: {
                             position: $scope.pos
                         }
                     })
                     .then(function(res){
+                        var data = $scope.data = res.data;
                         d3.select($element[0])
-                        .selectAll('div')
-                        .data(res.data)
+                        .selectAll('.bar')
+                        .data(data)
                         .enter()
                         .append('div')
+                        .attr('class', 'bar')
+                        .attr('tooltip', function(d){ return d.name; })
                         .style({
-                            width: function(datum){ return datum.stats.points + 'px'; },
+                            display: 'inline-block',
+                            height: function(datum){ return datum.stats.points + 'px'; },
+                            position: 'relative',
+                            top: $scope.h - data[0].stats.points,
+                            width: (100 / datacount) + '%',
                             'background-color': '#004060',
-                            color: 'white',
-                            'font-size': '50%',
-                            'white-space': 'nowrap',
-                            overflow: 'hidden',
-                        })
-                        .text(function(datum){ return datum.name; });
+                            // color: 'white',
+                            // 'font-size': '50%',
+                            // 'white-space': 'nowrap',
+                            // overflow: 'hidden',
+                        });
+
+                        d3.select($element[0])
+                            .selectAll('.x-gridlines')
+                            .data([10, 20, 30, 40])
+                            .enter()
+                            .append('div')
+                            .attr('class', 'x-gridlines')
+                            .style({
+                                display: 'inline-block',
+                                height: '100%',
+                                width: '1px',
+                                'background-color': 'rgba(255,255,255,0.25)',
+                                position: 'absolute',
+                                top: 0,
+                                left: function(d){ return d / datacount * 100 + '%'; }
+                            });
                     });
                 };
             },

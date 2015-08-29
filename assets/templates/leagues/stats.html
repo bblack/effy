@@ -1,12 +1,10 @@
 <div class='row'>
     <div class='col-sm-2' ng-repeat='pos in positions' id='top50_{{pos}}'>
-            <div>
-                {{pos}}
-            </div>
-            <div ng-controller='chartController'>
+            <h3>{{pos}}</h3>
+            <div ng-controller='chartController'
+                ng-style='{height: h + "px"}'
+                style='background-color: rgba(0, 64, 96, 0.05); position: relative;'>
+                <span ng-if='!data'>Loading...</span>
             </div>
     </div>
-</div>
-
-<div id='thing' style='background-color: rgba(0, 64, 96, 0.05);'>
 </div>
