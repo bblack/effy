@@ -133,6 +133,53 @@ var app = express()
         res.json(matchups);
     });
 })
+.get('/leagues/:league_id/players', function(req, res){
+    var SLOT_CATEGORY_ID = {
+        QB: 0,
+        RB: 2,
+        WR: 4,
+        TE: 6,
+        'D/ST': 16,
+        K: 17
+    };
+    var espnurl = url.format({
+        protocol: ESPN_PROTO,
+        host: ESPN_HOST,
+        pathname: '/ffl/playertable/prebuilt/freeagency',
+        query: {
+            leagueId: req.param('league_id'),
+            teamId: req.param('team_id'),
+            seasonId: SEASON,
+            '': 'undefined',
+            avail: -1,
+            slotCategoryId: SLOT_CATEGORY_ID[req.param('position')],
+            context: 'freeagency',
+            view: 'overview',
+            version: 'projections',
+            startIndex: 0,
+            r: 25649303
+        }
+    });
+    request.getAsync(espnurl)
+    .spread(function(espnres){
+        var $ = cheerio.load(espnres.body);
+        var lines = $('table.playerTableTable tr.pncPlayerRow').map(function(i,e){
+            var $e = $(e);
+            var playerAnchor = $e.find('td.playertablePlayerName a');
+            var teamAndPos = $e.find('td.playertablePlayerName').contents().eq(1).text().split(/\s+/);
+            return {
+                id: playerAnchor.attr('playerid'),
+                name: playerAnchor.text(),
+                team: teamAndPos[1],
+                pos: teamAndPos[2],
+                stats: {
+                    points: parseInt($e.find('td.playertableStat').eq(0).text())
+                }
+            };
+        });
+        res.send(lines);
+    });
+})
 .get('/leagues/:league_id/teams/:team_id/news', function(req, res){
     var espnUrl = url.format({
         protocol: ESPN_PROTO,

@@ -3,6 +3,7 @@ requirejs.config({
         angular: '../bower_components/angular/angular.min',
         'angular-resource': '../bower_components/angular-resource/angular-resource.min',
         'angular-route': '../bower_components/angular-route/angular-route.min',
+        d3: '../bower_components/d3/d3',
         underscore: '../bower_components/underscore/underscore-min'
     },
     shim: {
@@ -11,6 +12,9 @@ requirejs.config({
         },
         'angular-resource': ['angular'],
         'angular-route': ['angular'],
+        d3: {
+            exports: 'd3'
+        },
         underscore: {
             exports: '_'
         }
@@ -53,6 +57,36 @@ define(function(require){
                 });
             },
             templateUrl: '/templates/leagues/recent_activity.html'
+        })
+        .when('/leagues/:league_id/stats', {
+            controller: function($scope, $routeParams, $http) {
+                var d3 = require('d3');
+                $scope.positions = ['QB', 'RB', 'WR', 'TE', 'D/ST', 'K'];
+                $scope.chartController = function($scope, $element){
+                    $http.get('/leagues/' + $routeParams.league_id + '/players', {
+                        params: {
+                            position: $scope.pos
+                        }
+                    })
+                    .then(function(res){
+                        d3.select($element[0])
+                        .selectAll('div')
+                        .data(res.data)
+                        .enter()
+                        .append('div')
+                        .style({
+                            width: function(datum){ return datum.stats.points + 'px'; },
+                            'background-color': '#004060',
+                            color: 'white',
+                            'font-size': '50%',
+                            'white-space': 'nowrap',
+                            overflow: 'hidden',
+                        })
+                        .text(function(datum){ return datum.name; });
+                    });
+                };
+            },
+            templateUrl: '/templates/leagues/stats.html'
         })
         .when('/leagues/:league_id/teams/:team_id', {
             controller: function($scope, $routeParams, Team, $http){
