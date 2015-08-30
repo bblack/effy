@@ -61,10 +61,13 @@ define(function(require){
         .when('/leagues/:league_id/stats', {
             controller: function($scope, $routeParams, $http) {
                 $scope.positions = ['QB', 'RB', 'WR', 'TE', 'D/ST', 'K'];
-                $scope.chartController = function($scope, $element){
+                $scope.chartController = function($scope, $element, $compile){
                     var d3 = require('d3');
                     var datacount = 50;
                     $scope.h = 400;
+                    $scope.setHoverDatum = function(d){
+                        $scope.hoverdatum = _.findWhere($scope.data, {id: d});
+                    }
 
                     $http.get('/leagues/' + $routeParams.league_id + '/players', {
                         params: {
@@ -73,25 +76,19 @@ define(function(require){
                     })
                     .then(function(res){
                         var data = $scope.data = res.data;
-                        d3.select($element[0])
+                        d3.select($element.find('div')[0]) // find('.chart') doesn't work, who knows
                         .selectAll('.bar')
                         .data(data)
                         .enter()
                         .append('div')
                         .attr('class', 'bar')
-                        .attr('tooltip', function(d){ return d.name; })
                         .style({
-                            display: 'inline-block',
                             height: function(datum){ return datum.stats.points + 'px'; },
-                            position: 'relative',
                             top: $scope.h - data[0].stats.points,
-                            width: (100 / datacount) + '%',
-                            'background-color': '#004060',
-                            // color: 'white',
-                            // 'font-size': '50%',
-                            // 'white-space': 'nowrap',
-                            // overflow: 'hidden',
-                        });
+                            width: (100 / datacount) + '%'
+                        })
+                        .attr('ng-mouseenter', function(d){ return 'setHoverDatum("' + d.id + '")'; })
+                        .attr('ng-mouseleave', 'hoverdatum = null')
 
                         d3.select($element[0])
                             .selectAll('.x-gridlines')
@@ -108,6 +105,24 @@ define(function(require){
                                 top: 0,
                                 left: function(d){ return d / datacount * 100 + '%'; }
                             });
+
+                        d3.select($element[0])
+                            .selectAll('.y-gridlines')
+                            .data([50,100,150,200,250,300,350])
+                            .enter()
+                            .append('div')
+                            .attr('class', 'y-gridlines')
+                            .style({
+                                display: 'inline-block',
+                                width: '100%',
+                                height: '1px',
+                                'background-color': 'rgba(255,255,255,0.25)',
+                                position: 'absolute',
+                                left: 0,
+                                top: function(d){ return d + 'px'; }
+                            });
+
+                        $compile($element.find('div')[0])($scope);
                     });
                 };
             },
