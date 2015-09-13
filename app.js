@@ -145,19 +145,13 @@ var app = express()
     var espnurl = url.format({
         protocol: ESPN_PROTO,
         host: ESPN_HOST,
-        pathname: '/ffl/playertable/prebuilt/freeagency',
+        // pathname: '/ffl/playertable/prebuilt/freeagency',
+        pathname: '/ffl/leaders',
         query: {
             leagueId: req.param('league_id'),
-            teamId: req.param('team_id'),
-            seasonId: SEASON,
-            '': 'undefined',
-            avail: -1,
-            slotCategoryId: SLOT_CATEGORY_ID[req.param('position')],
-            context: 'freeagency',
-            view: 'overview',
-            version: 'projections',
-            startIndex: 0,
-            r: 25649303
+            seasonId: req.param('season'),
+            avail: -1, // -1: all, 1: FA
+            slotCategoryId: SLOT_CATEGORY_ID[req.param('position')]
         }
     });
     request.getAsync(espnurl)
@@ -173,7 +167,7 @@ var app = express()
                 team: teamAndPos[1],
                 pos: teamAndPos[2],
                 stats: {
-                    points: parseInt($e.find('td.playertableStat').eq(0).text())
+                    points: parseInt($e.find('td.playertableStat.appliedPoints').eq(0).text())
                 }
             };
         });

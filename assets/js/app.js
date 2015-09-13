@@ -71,6 +71,7 @@ define(function(require){
 
                     $http.get('/leagues/' + $routeParams.league_id + '/players', {
                         params: {
+                            season: 2014,
                             position: $scope.pos
                         }
                     })
