@@ -116,7 +116,8 @@ request.getAsync(url_)
                 .value();
         });
         var team = {
-            players: players
+            players: players,
+            total: _.reduce(players, function(memo, p){ return memo + p; }, 0)
         };
         return team;
     });
