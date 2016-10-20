@@ -54,12 +54,7 @@ var app = express()
     .spread(function(espnRes){
         var $ = cheerio.load(espnRes.body);
         var name = $(".league-team-names h1").text();
-        var teams = $("#games-tabs1 a").map(function(i,e){
-            return {
-                id:   $(e).attr('href').match(/teamId=(\d*)/)[1],
-                name: $(e).contents()[0].data.replace(/\s*$/, '')
-            };
-        });
+        var teams = [];
         var currentDivision;
         $('.lo-sidebar-box').eq(-1).find('table tr').map(function(i,e){
             var $e = $(e);
@@ -68,12 +63,16 @@ var app = express()
                 currentDivision = newDivision.text();
                 return;
             }
-            var teamName = $e.find('td').eq(1).find('a').text();
-            var team = _.findWhere(teams, {name: teamName})
+            var teamLink = $e.find('td').eq(1).find('a');
+            if (!teamLink.length) return;
+            var teamName = teamLink.text();
+            var teamId = teamLink.attr('href').match(/teamId=(\d*)/)[1];
+            var team = {name: teamName, id: teamId};
             var record = $e.find('td').eq(2).text().split('-');
             team.wins = Number(record[0]);
             team.losses = Number(record[1]);
             team.division = currentDivision;
+            teams.push(team);
         });
         res.json({
             id   : req.param('id'),
