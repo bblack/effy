@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "node main"
+  },
   "dependencies": {
     "bluebird": "^2.9.34",
     "broccoli": "^0.16.7",
