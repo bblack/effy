@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "node main"
+    "start": "node main",
+    "test": "mocha --recursive test"
   },
   "dependencies": {
     "bluebird": "^2.9.34",
