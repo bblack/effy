@@ -18,6 +18,8 @@
     "angular": "~1.4.4",
     "angular-resource": "~1.4.4",
     "angular-route": "~1.4.4",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "requirejs": "^2.3.2",
+    "d3": "^4.2.8"
   }
 }

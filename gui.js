@@ -17,6 +17,7 @@ var app = express()
     // res.render('index');
     res.sendFile(__dirname + '/views/index.html');
 })
-.use('/', require('./app'));
-
-module.exports = app;
+.use('/', require('./app'))
+.listen(process.env.PORT || 3000, function(){
+    console.log('listening on %d', this.address().port);
+});
