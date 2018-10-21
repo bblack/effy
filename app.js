@@ -85,6 +85,7 @@ var app = express()
     });
 })
 .get('/leagues/:id/scoreboard', function(req, res){
+    console.log('garbage')
     var espnurl = url.format({
         protocol: ESPN_PROTO,
         host: ESPN_HOST,
@@ -97,6 +98,7 @@ var app = express()
     });
     request.getAsync(espnurl)
     .spread(function(espnres){
+        console.log('crap')
         var $ = cheerio.load(espnres.body);
         var matchups = $('#scoreboardMatchups table.matchup').map(function(i,e){
             var sides = $(e).find('tr').slice(0, 2).map(function(i,e){
@@ -113,6 +115,8 @@ var app = express()
             });
             return sides;
         });
+        console.log('ok')
+        console.log(matchups)
         res.json(matchups);
     });
 })
@@ -158,6 +162,7 @@ var app = express()
     });
 })
 .get('/leagues/:league_id/teams/:team_id/news', function(req, res){
+    // need to be auth'd for this
     var espnUrl = url.format({
         protocol: ESPN_PROTO,
         host: ESPN_HOST,

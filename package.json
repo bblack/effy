@@ -17,6 +17,7 @@
     "broccoli-funnel": "^0.2.8",
     "broccoli-less-single": "^0.4.0",
     "broccoli-merge-trees": "^0.2.3",
+    "mocha": "*",
     "supertest": "^1.0.1"
   }
 }

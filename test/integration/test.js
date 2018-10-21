@@ -37,6 +37,19 @@ describe('GET /leagues/:id/recent_activity', function(){
         })
     })
 })
+describe('GET /leagues/:league_id/scoreboard', () => {
+    before(function(){
+        return request(app)
+            .get('/leagues/172724/recent_activity')
+            .then((res) => this.res = res);
+    })
+    it('should respond 200', function(){
+        assert.equal(this.res.status, 200)
+    })
+    it('should return an array', function(){
+        
+    })
+});
 describe('GET /leagues/:league_id/teams/:team_id/news', function(){
     it('should work', function(done){
         request(app)
